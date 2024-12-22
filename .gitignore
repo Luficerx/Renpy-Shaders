@@ -1,0 +1,17 @@
+# Ignore folders
+game/cache/
+game/audio/
+game/tl/
+.vscode/
+
+# Ignore Files
+game/saves/navigation.json
+game/saves/persistent
+traceback.txt
+errors.txt
+log.txt
+
+# Ignore extensions
+*.save
+*.rpyc
+*.bak

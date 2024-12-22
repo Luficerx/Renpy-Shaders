@@ -1,0 +1,1 @@
+default persistent.circle_disclaimer = False
