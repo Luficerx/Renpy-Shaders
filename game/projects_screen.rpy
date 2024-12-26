@@ -9,4 +9,6 @@ screen projects():
         
         label "PROJECTS" xalign 0.5
 
+        textbutton "Gradient Displayables" action Jump("gradient_examples") xalign 0.5
         textbutton "Circle Displayables" action Jump("circle_examples") xalign 0.5
+        textbutton "Color Picker" action Jump("color_picker_examples") xalign 0.5

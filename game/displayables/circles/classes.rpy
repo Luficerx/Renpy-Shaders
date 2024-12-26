@@ -1,30 +1,14 @@
 init python:
     from typing import Union as T
 
-    def validate_circle_color(color):
-        """Function to check if a color is a valid value"""
-        
-        if type(color) is str:
-            return Color(color).rgb
-
-        elif type(color) is tuple or type(color) is list:
-            if len(color) == 3:
-                return tuple(color)
-
-            else:
-                raise ValueError(f"color argument expect at least 3 values but got {len(color)}.")
-
-        else:
-            raise TypeError(f"color argument must be of type string: \"#FFF\", tuple: (0.0, 0.0, 0.0) or list: [0.0, 1.0, 0.0].\n but got {type(color)} {color}.")
-    
     class RawCircle(renpy.Displayable):
         def __init__(self, color, radius, *args, **kwargs):
             """
             Creates a raw circle displayable, don't have anti-aliasing.
             
-            `color`: [string or tuple] - hex value or a tuple with the R, G, B values.
+            `color`: str or tuple[float, float, float] - hex value or a tuple with the R, G, B values.
 
-            `radius`: [int or float] - the circle radius.
+            `radius`: int or float - the circle radius.
             """
 
             super(RawCircle, self).__init__(*args, **kwargs)
@@ -54,11 +38,11 @@ init python:
             """
             Creates a circle displayable.
             
-            `color`: [string or tuple] - hex value or a tuple with the R, G, B values.
+            `color`: str or tuple[float, float, float] - hex value or a tuple with the R, G, B values.
 
-            `radius`: [int or float] - the circle radius.
+            `radius`: int or float - the circle radius.
 
-            `alias_factor`: [int or float] - how strong the anti-aliasing interpolation is.
+            `alias_factor`: int or float - how strong the anti-aliasing interpolation is.
             """
 
             super(Circle, self).__init__(*args, **kwargs)
@@ -90,13 +74,13 @@ init python:
             """
             Creates a hollow circle displayable.
             
-            `color`: [string or tuple] - hex value or a tuple with the R, G, B values.
+            `color`: str or tuple[float, float, float] - hex value or a tuple with the R, G, B values.
 
-            `radius`: [int or float] - the circle radius.
+            `radius`: int or float - the circle radius.
 
-            `alias_factor`: [int or float] - how strong the anti-aliasing interpolation is.
+            `alias_factor`: int or float - how strong the anti-aliasing interpolation is.
 
-            `thickness`: [int or float] - how thick the borders are is.
+            `thickness`: int or float - how thick the borders are is.
             """
 
             super(HollowCircle, self).__init__(*args, **kwargs)
@@ -130,17 +114,17 @@ init python:
             """
             Creates a hollow circle displayable.
             
-            `color`: [string or tuple] - hex value or a tuple with the R, G, B values.
+            `color`: str or tuple[float, float, float] - hex value or a tuple with the R, G, B values.
 
-            `radius`: [int or float] - the circle radius.
+            `radius`: int or float - the circle radius.
 
-            `alias_factor`: [int or float] - how strong the anti-aliasing interpolation is.
+            `alias_factor`: int or float - how strong the anti-aliasing interpolation is.
 
-            `thickness`: [int or float] - how thick the borders are is.
+            `thickness`: int or float - how thick the borders are is.
 
-            `progress`: [float] - value between 0.0 - 1.0 is how much filled the bar is.
+            `progress`: float - value between 0.0 ~ 1.0 is how much filled the bar is.
 
-            `rotation`: [float] - value between 0.0 - 1.0 where 0.0 is 0 degrees and 1.0 is 360 degrees clockwise.
+            `rotation`: float - value between 0.0 ~ 1.0 where 0.0 is 0 degrees and 1.0 is 360 degrees clockwise.
             """
 
             super(HollowArc, self).__init__(*args, **kwargs)
@@ -172,3 +156,19 @@ init python:
 
             renpy.redraw(self, 0.0)
             return rv
+    
+    def validate_circle_color(color):
+        """Function to check if a color is a valid value"""
+        
+        if type(color) is str:
+            return Color(color).rgb
+
+        elif type(color) is tuple or type(color) is list:
+            if len(color) == 3:
+                return tuple(color)
+
+            else:
+                raise ValueError(f"color argument expect at least 3 values but got {len(color)}.")
+
+        else:
+            raise TypeError(f"color argument must be of type string: \"#FFF\", tuple: (0.0, 0.0, 0.0) or list: [0.0, 1.0, 0.0].\n but got {type(color)} {color}.")
