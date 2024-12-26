@@ -16,7 +16,7 @@ init python:
 
             `size`: tuple[int, int] - The width and height of this displayable.
 
-            `direction`: str - The direction which the hsl gradient will be drawn; Only `'vertical'` and `'horizontal'` are allowed.
+            `direction`: str - The direction which the hls gradient will be drawn; Only `'vertical'` and `'horizontal'` are allowed.
             
             `outline`: str - string hexcode passed to the Thumb displayable, this sets the "outline" color.
             """
@@ -168,7 +168,7 @@ init python:
             self.inner = Circle(color, inner_size)
             self.outer = Circle(self.outline, outer_size)
 
-            rv = renpy.render(Fixed(Transform(self.outer, align=(0.5, 0.5)),Transform(self.inner, align=(0.5, 0.5))), w, h, st, at)
+            rv = renpy.render(Fixed(Transform(self.outer, align=(0.5, 0.5)), Transform(self.inner, align=(0.5, 0.5))), w, h, st, at)
 
             return rv
         
