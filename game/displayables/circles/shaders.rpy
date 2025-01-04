@@ -138,6 +138,7 @@ init python:
         }
 
         bool valid_arc = false;
+        
         if (u_thickness == u_radius) {
             valid_arc = (dist <= u_radius && in_arc);
 
@@ -147,7 +148,6 @@ init python:
         }
 
         if (valid_arc) {
-            
             gl_FragColor = mix(vec4(0.0), vec4(u_color, 1.0), alpha);
             
         } else {

@@ -29,7 +29,7 @@ label gradient_examples:
     if not persistent.gradient_disclaimer:
         "[DISCLAIMER] For anyone reading this, the following examples are for study purposes."
         "This contains a simple gradient that mixes four colors in between in each corner."
-        "[[NEW GRADIENT'S PLANNEN.]"
+        "[[NEW GRADIENT'S PLANNED.]"
         $ persistent.gradient_disclaimer = True
 
     call screen display_gradients()

@@ -1,24 +1,46 @@
 screen color_picker():
     add Solid("#181818")
 
-    default CanvasOne = ColorGradient((250, 250), outline="#000")
-    default SpectrumOne = SpectrumGradient(CanvasOne, (250, 30), direction="horizontal", outline="#000")
+    default Canvas = ColorGradient((250, 250), outline="#464646")
+    default Spectrum = SpectrumGradient(Canvas, (250, 30), direction="horizontal", outline="#000")
 
-    frame:
-        background "#000" xysize (264, 354) align (0.5, 0.5)
-        add Gradient((260, 350)) align (0.5, 0.5)
+    default RadialCanvas = ColorGradient((125, 125), outline="#464646")
+    default RadialSpectrum = SpectrumRadialGradient(RadialCanvas, 117.0, 1.5, 16.0, "#000000")
 
-        vbox:
-            fit_first "height" xsize 250 spacing 5 align (0.5, 0.5)
-            add SpectrumOne align (0.0, 0.0)
-            add CanvasOne align (0.0, 0.0)
-            
+    hbox:
+        align (0.5, 0.5) spacing 5
+        frame:
+            background "#000" xysize (264, 355)
+            add Gradient((260, 351)) align (0.5, 0.5)
+
+            add Spectrum align (0.5, 0.0) yoffset 1
+
             fixed:
-                fit_first True
-                add CanvasOne.solid(250, 50)
-                textbutton "[CanvasOne.hexcode!u]":
-                    action [Notify(f"Copied {CanvasOne.hexcode}"), CopyToClipboard(CanvasOne.hexcode)]
-                    align (0.5, 1.0)
-                    text_style "color_picker_button_style" text_size 24
-                    
+                fit_first True align (0.5, 1.0) yoffset -1
+                add Canvas.solid(250, 50)
+                textbutton "[Canvas.hexcode!u]":
+                    action [Notify(f"Copied {Canvas.hexcode}"), CopyToClipboard(Canvas.hexcode)]
+                    text_style "color_picker_text_style" text_size 24 align (0.5, 0.5)
+
+            add Canvas align (0.5, 0.0) yoffset 37
+
+        frame:
+            background "#000" xysize (252, 355)
+            add Gradient((248, 351)) align (0.5, 0.5)
+            fixed:
+                fit_first True align (0.5, 0.0)
+                add HollowCircle("#FFF", 119.0, 1.75, 25.0) align (0.5, 0.5)
+                add RadialSpectrum align (0.5, 0.5)
+
+                frame:
+                    background Gradient((129, 129), ("#090909", "#090909", "#bdbdbd", "#bdbdbd")) xysize (129, 129) align (0.5, 0.5) padding (0, 0, 0, 0)
+                    add RadialCanvas align (0.5, 0.5)
+
+            fixed:
+                fit_first True align (0.5, 1.0) yoffset -1
+                add RadialCanvas.solid(238, 50)
+                textbutton "[RadialCanvas.hexcode!u]":
+                    action [Notify(f"Copied {RadialCanvas.hexcode}"), CopyToClipboard(RadialCanvas.hexcode)]
+                    text_style "color_picker_text_style" text_size 24 align (0.5, 0.5)
+
     textbutton "Return (x)" action Jump("start") keysym "K_x" align (0.0, 1.0) offset (10, -10) text_style "return_button_style"

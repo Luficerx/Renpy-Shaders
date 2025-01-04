@@ -1,4 +1,5 @@
 # Ignore folders
+game/displayables/wip/
 game/cache/
 game/audio/
 game/tl/
