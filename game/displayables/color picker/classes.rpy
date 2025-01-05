@@ -138,8 +138,6 @@ init python:
                     self.thumb.y = min(self.size[1], max(0, int(y)))
                     self.thumb.color[0] = (self.thumb.y / self.size[1])
 
-                self.t = f"{self.thumb.color}"
-
                 color = Color(hls=self.thumb.color).rgba
                 self.gradient.top_right = color
                 self.gradient.update_color()
@@ -207,7 +205,6 @@ init python:
             if self.focus:
                 self.picker.x = min(self.size[0], max(0, x))
                 self.picker.y = min(self.size[1], max(0, y))
-                self.picker.update_color(self.size, self.top_left, self.top_right, self.bottom_left, self.bottom_right)
                 self.update_color()
 
         def update_color(self):
