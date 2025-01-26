@@ -80,7 +80,7 @@ init python:
 
             `alias_factor`: int or float - how strong the anti-aliasing interpolation is.
 
-            `thickness`: int or float - how thick the borders are is.
+            `thickness`: int or float - how thick the borders are.
             """
 
             super(HollowCircle, self).__init__(*args, **kwargs)
