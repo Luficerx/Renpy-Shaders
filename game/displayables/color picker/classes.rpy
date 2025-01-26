@@ -48,7 +48,7 @@ init python:
             shader_rv.add_uniform("u_center", (0, 0))
 
             rv.blit(shader_rv, (0, 0))
-            rv.blit(picker_rv, (self.picker.x, self.picker.y))
+            rv.subpixel_blit(picker_rv, (self.picker.x, self.picker.y))
 
             renpy.redraw(self, 0.0)
 
@@ -72,8 +72,8 @@ init python:
                 hue_angle = math.degrees(angle + offset)
                 hue = ((hue_angle + 360) % 361) / 360
 
-                self.picker.x = math.ceil(self.radius + self.offset * math.cos(angle))
-                self.picker.y = math.ceil(self.radius + self.offset * math.sin(angle))
+                self.picker.x = self.radius + self.offset * math.cos(angle)
+                self.picker.y = self.radius + self.offset * math.sin(angle)
 
                 color = Color(hls=(hue, 0.5, 1.0))
                 self.picker.color = color.rgb
@@ -131,11 +131,11 @@ init python:
 
             if self.focus:
                 if self.direction == "horizontal":
-                    self.thumb.x = min(self.size[0], max(0, int(x)))
+                    self.thumb.x = min(self.size[0], max(0, x))
                     self.thumb.color[0] = (self.thumb.x / self.size[0])
 
                 else:
-                    self.thumb.y = min(self.size[1], max(0, int(y)))
+                    self.thumb.y = min(self.size[1], max(0, y))
                     self.thumb.color[0] = (self.thumb.y / self.size[1])
 
                 color = Color(hls=self.thumb.color).rgba
@@ -181,9 +181,8 @@ init python:
             shader_rv.add_uniform("u_top_left", self.top_left)
             
             picker_rv = renpy.render(self.picker, 0, 0, st=st, at=at)
-
             rv.blit(shader_rv, (0, 0))
-            rv.blit(picker_rv, (self.picker.x, self.picker.y))
+            rv.subpixel_blit(picker_rv, (self.picker.x, self.picker.y))
 
             return rv
         
@@ -231,8 +230,8 @@ init python:
 
         def render(self, w, h, st, at):
 
-            inner_size = min(10, max(7, (5*(self.size//200))))
-            outer_size = min(12, max(9, (6*(self.size//200))))
+            inner_size = min(10, max(7, (5 * (self.size // 200))))
+            outer_size = min(12, max(9, (6 * (self.size // 200))))
 
             color = Color(rgb=self.color).hexcode
             
@@ -329,7 +328,7 @@ init python:
         def set_pos(self, radius, thickness, padding):
             radius = radius
             angle = math.atan2(52.0 - radius, 52.0 - radius)
-            offset = (radius - thickness) + (thickness/2)
+            offset = (radius - thickness) + (thickness / 2)
 
-            self.x = math.ceil(radius + offset * math.cos(angle))
-            self.y = math.ceil(radius + offset * math.sin(angle))
+            self.x = radius + offset * math.cos(angle)
+            self.y = radius + offset * math.sin(angle)

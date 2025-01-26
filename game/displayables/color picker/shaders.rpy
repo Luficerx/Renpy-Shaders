@@ -25,6 +25,7 @@ init python:
 
             } else {
                 rgb = vec3(c, 0.0, x);
+                
             }
 
             return rgb + m;
@@ -81,8 +82,7 @@ init python:
 
         vec3 color = hls2rgb(hue, sat, light);
 
-        gl_FragColor = vec4(color, 1.0);
-        """)
+        gl_FragColor = vec4(color, 1.0);""")
 
     renpy.register_shader("2DVfx.radial_hsl_gradient", variables="""
 
@@ -118,15 +118,11 @@ init python:
         float alpha_outer = smoothstep(u_radius, u_radius - u_alias_factor, dist);
         float alpha_inner = 0.0;
 
-        if (u_thickness < u_radius) {
-            alpha_inner = smoothstep(inner_radius + u_alias_factor, inner_radius, dist);
-        }
+        if (u_thickness < u_radius) alpha_inner = smoothstep(inner_radius + u_alias_factor, inner_radius, dist);
 
         if (dist <= u_radius && dist >= inner_radius) {
             float alpha = alpha_outer * (1.0 - alpha_inner) + alpha_inner * (1.0 - alpha_outer);
             gl_FragColor = mix(vec4(0.0), vec4(color, 1.0), alpha);
             
         } else {
-            gl_FragColor = vec4(0.0);
-        }
-        """)
+            gl_FragColor = vec4(0.0);}""")

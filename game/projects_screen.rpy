@@ -12,3 +12,5 @@ screen projects():
         textbutton "Gradient Displayables" action Jump("gradient_examples") xalign 0.5
         textbutton "Circle Displayables" action Jump("circle_examples") xalign 0.5
         textbutton "Color Picker" action Jump("color_picker_examples") xalign 0.5
+        textbutton "[[WIP] Extended Transitions" action Jump("transitions_examples") xalign 0.5
+        textbutton "[[WIP] Graph Displayables" action Jump("graph_examples") xalign 0.5

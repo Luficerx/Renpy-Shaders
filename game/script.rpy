@@ -33,3 +33,17 @@ label gradient_examples:
         $ persistent.gradient_disclaimer = True
 
     call screen display_gradients()
+
+label transitions_examples:
+    "[[NOT DONE]"
+    
+    jump start
+
+    call screen display_transitions()
+
+label graph_examples:
+    "[[NOT DONE]"
+    
+    jump start
+
+    call screen display_graph()
