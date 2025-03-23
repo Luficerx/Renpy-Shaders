@@ -47,7 +47,50 @@ init python:
             gl_FragColor = vec4(0.0);
 
         }""")
-    
+
+    renpy.register_shader("2DVfx.ocircle", variables="""
+
+        uniform float u_alias_factor; // Anti-aliasign factor.
+        uniform float u_radius;
+        uniform vec2 u_center;
+
+        uniform float u_outline_thickness;
+        uniform vec3 u_outline;
+        uniform vec3 u_color;
+
+        attribute vec4 a_position;
+        varying vec2 v_position;
+
+        """, vertex_300="""
+        
+        v_position = a_position.xy;
+
+        """, fragment_300="""
+        vec2 pos = v_position - vec2(u_radius, u_radius);
+        float dist = distance(pos, u_center);
+
+        vec4 circle_color = vec4(u_color, 1.0);
+        vec4 outline_color = vec4(u_outline, 1.0);
+
+        float outer_radius = u_radius;
+        float inner_radius = u_radius - u_outline_thickness;
+
+        float outer_edge = smoothstep(outer_radius, outer_radius - u_alias_factor, dist);
+        float inner_edge = smoothstep(inner_radius, inner_radius + u_alias_factor, dist);
+
+        if (dist > outer_radius) {
+            gl_FragColor = vec4(0.0);
+
+        } else if (dist > inner_radius) {
+            gl_FragColor = mix(vec4(0.0), outline_color, outer_edge);
+
+        } else {
+            float inner_alpha = smoothstep(inner_radius - u_alias_factor, inner_radius, dist);
+            gl_FragColor = mix(outline_color, circle_color, 1.0 - inner_alpha);
+
+        }
+        """)
+
     renpy.register_shader("2DVfx.hollowcircle", variables="""
 
         uniform float u_alias_factor; // Anti-aliasign factor.

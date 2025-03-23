@@ -28,6 +28,7 @@ screen display_circles():
                     add Circle("#F00", 50.0, 0.0)
                     add Circle("#0F0", 50.0, 1.0)
                     add Circle("#00F", 50.0, 1.5)
+                    add Circle("#000000", 50.0, 1.5, outline="#ffffff", outline_thickness=3)
                     add AnimatedCircle("#00F", 50.0, 1.5)
 
             frame:

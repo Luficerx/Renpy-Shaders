@@ -34,7 +34,7 @@ init python:
             return rv
 
     class Circle(renpy.Displayable):
-        def __init__(self, color: T[str, tuple, list], radius: T[int, float] = 5.0, alias_factor: T[int, float] = 2.0, *args, **kwargs):
+        def __init__(self, color: T[str, tuple, list], radius: T[int, float] = 5.0, alias_factor: T[int, float] = 2.0, outline: T[str, tuple, list] = None, outline_thickness: T[float, int] = 2, *args, **kwargs):
             """
             Creates a circle displayable.
             
@@ -51,19 +51,32 @@ init python:
             self.radius = radius
             self.alias_factor = alias_factor
             self.size = (self.radius*2, self.radius*2)
+            
+            self.outline = None
+            self.outline_thickness = outline_thickness
+
+            if outline is not None:
+                self.outline = validate_circle_color(outline)
 
         def render(self, w, h, st, at):
             rv = renpy.Render(*self.size)
             shader_rv = renpy.Render(*self.size)
             
-            shader_rv.add_shader("2DVfx.circle")
+            if self.outline is not None:
+                shader_rv.add_shader("2DVfx.ocircle")
+                shader_rv.add_uniform("u_outline", self.outline)
+                shader_rv.add_uniform("u_outline_thickness", self.outline_thickness)
+
+            else:
+                shader_rv.add_shader("2DVfx.circle")
+            
             shader_rv.mesh = True
             shader_rv.fill((0.0, 0.0, 0.0, 1.0))
             shader_rv.add_uniform("u_alias_factor", self.alias_factor)
             shader_rv.add_uniform("u_radius", self.radius)
             shader_rv.add_uniform("u_center", (0, 0))
             shader_rv.add_uniform("u_color", self.color)
-            
+
             rv.blit(shader_rv, (0, 0))
 
             renpy.redraw(self, 0.0)
