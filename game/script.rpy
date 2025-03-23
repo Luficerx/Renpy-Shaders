@@ -34,6 +34,76 @@ label gradient_examples:
 
     call screen display_gradients()
 
+label tree_canvas_examples:
+    if not persistent.tree_canvas_disclaimer:
+        "[DISCLAIMER] For anyone reading this, the following examples are for study purposes."
+        "This contains an displayable that draws line across the children of the tree."
+        $ persistent.tree_canvas_disclaimer = True
+
+    python:
+        tree = TreeCanvas()
+        
+        branches = [
+            TreeBranch(
+                ImageButton(
+                    idle_image="placeholder.png",
+                    action=(Notify("Unknown")),
+                    focus_mask=True),
+
+                color="#00ff73", 
+                id="branch1",
+                target=("branch2", "branch3"),
+                xpos=100,
+                ypos=0,
+                ),
+
+            TreeBranch(
+                ImageButton(
+                    idle_image="melissa.png",
+                    action=(Notify("Girl 1")),
+                    focus_mask=True),
+                
+                color="#fffb00",
+                id="branch2",
+                target=("branch4",),
+                xpos=200,
+                ypos=300,
+                ),
+
+            TreeBranch(
+                ImageButton(
+                    idle_image="lynn.png",
+                    action=(Notify("Girl 2")),
+                    focus_mask=True),
+                
+                color="#d400ff",
+                id="branch3",
+                xpos=400,
+                ypos=300,
+                ),
+
+            TreeBranch(
+                "placeholder.png",
+                color="#ff7700", 
+                id="branch4",
+                xpos=400,
+                ypos=600,
+                ),
+
+            TreeBranch(
+                "placeholder.png",
+                color="#006aff", 
+                id="branch5",
+                target=("branch3", "branch4"),
+                xpos=100,
+                ypos=800,
+                ),
+            ]
+
+        tree.add_branches(*branches)
+
+    call screen display_tree_canvas(tree)
+
 label transitions_examples:
     "[[NOT DONE]"
     
@@ -44,6 +114,14 @@ label transitions_examples:
 label graph_examples:
     "[[NOT DONE]"
     
-    jump start
+    # jump start
 
     call screen display_graph()
+
+default data = None
+
+label painter_examples:
+    call screen display_painter()
+
+label oswindow_examples:
+    call screen display_oswindow()
