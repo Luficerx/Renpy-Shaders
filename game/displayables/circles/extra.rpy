@@ -1,4 +1,4 @@
-# These transforms are just for showing, The way to animated shouldn't rely on these
+# These transforms are just for showing, The way to animate shouldn't rely on these
 # At least the way I programmed as is.
 
 transform AnimatedCircle(color, rad=5.0, alias_factor=2.0):
