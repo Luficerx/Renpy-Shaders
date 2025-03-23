@@ -7,11 +7,9 @@
 
 init python:
     import math
-    focus_taken = False # This blocks other displayables from getting focus
-                        # when you're dragging something else
 
     class SpectrumRadialGradient(renpy.Displayable):
-        def __init__(self, gradient, radius, alias_factor: float = 2.0, thickness: float = 2.0, outline: str = "#FFF", padding: float = 5.0, *args, **kwargs):
+        def __init__(self, gradient, radius, alias_factor: float = 2.0, thickness: float = 2.0, outline: str = "#FFF", padding: float = 5.0, **kwargs):
             """
             `gradient`: ColorGradient - The gradient displayable which the slider will change the color.
 
@@ -20,19 +18,18 @@ init python:
             `outline`: str - string hexcode passed to the Thumb displayable, this sets the "outline" color.
             """
             
-            super(SpectrumRadialGradient, self).__init__(*args, **kwargs)
+            super(SpectrumRadialGradient, self).__init__(**kwargs)
 
             self.gradient = gradient
 
             self.radius = radius
             self.alias_factor = alias_factor
             self.thickness = min(radius, thickness + padding)
-            self.focus = False
+            self.focused = False
             self.size = (self.radius*2, self.radius*2)
-            self.offset = (self.radius - self.thickness) + (self.thickness/2)
 
-            self.picker = PickerHLS(self.radius, outline)
-            self.picker.set_pos(self.radius, self.thickness, padding/2)
+            self.picker = PickerHLS(self.thickness/2, outline, outline_thickness=1.5)
+            self.picker.set_pos(self.radius, self.thickness)
 
         def render(self, w, h, st, at):
             rv = renpy.Render(*self.size)
@@ -49,36 +46,49 @@ init python:
 
             rv.blit(shader_rv, (0, 0))
             rv.subpixel_blit(picker_rv, (self.picker.x, self.picker.y))
-
-            renpy.redraw(self, 0.0)
+            
+            if self.focused:
+                rv.add_focus(self, None, 0, 0, *self.size)
 
             return rv
 
         def event(self, ev, x, y, st):
-            global focus_taken
             dist = math.sqrt((x - self.radius) ** 2 + (y - self.radius) ** 2)
 
-            if MouseState.left() and (self.radius - self.thickness) <= dist <= self.radius and not focus_taken:
-                self.focus = True
-                focus_taken = True
+            if renpy.map_event(ev, "drag_activate") and (self.radius - self.thickness) <= dist <= self.radius:
+                renpy.display.focus.set_grab(self)
+                self.focused = True
 
-            if not MouseState.left():
-                self.focus = False
-                focus_taken = False
+            if renpy.map_event(ev, "drag_deactivate"):
+                renpy.display.focus.set_grab(None)
+                self.focused = False
 
-            if self.focus:
+                renpy.restart_interaction()
+
+            if self.has_focus():
                 offset = math.radians(135)
                 angle = math.atan2(y - self.radius, x - self.radius)
                 hue_angle = math.degrees(angle + offset)
                 hue = ((hue_angle + 360) % 361) / 360
 
-                self.picker.x = self.radius + self.offset * math.cos(angle)
-                self.picker.y = self.radius + self.offset * math.sin(angle)
+                offset = self.radius - self.picker.radius
+
+                self.picker.x = self.radius + offset * math.cos(angle) - self.picker.radius
+                self.picker.y = self.radius + offset * math.sin(angle) - self.picker.radius
 
                 color = Color(hls=(hue, 0.5, 1.0))
                 self.picker.color = color.rgb
                 self.gradient.top_right = color.rgba
                 self.gradient.update_color()
+
+        def visit(self):
+            return [ self.picker, self.gradient ]
+        
+        def per_interact(self):
+            renpy.redraw(self, 0.0)
+        
+        def has_focus(self):
+            return renpy.display.focus.get_grab() is self
 
     class SpectrumGradient(renpy.Displayable):
         def __init__(self, gradient, size: tuple[int, int] = (25, 200), direction: str = "vertical", outline: str = "#FFF", *args, **kwargs):
@@ -100,7 +110,7 @@ init python:
             self.direction = direction
             self.thumb = Thumb(size, direction, outline=outline)
             self.gradient = gradient
-            self.focus = False
+            self.focused = False
             self.size = size
 
         def render(self, w, h, st, at):
@@ -116,20 +126,23 @@ init python:
             rv.blit(shader_rv, (0, 0))
             rv.blit(thumb_rv, (min(self.size[0]-self.thumb.xsize, self.thumb.x), min(self.size[1]-self.thumb.ysize, self.thumb.y)))
 
+            if self.focused:
+                rv.add_focus(self, None, 0, 0, *self.size)
+
             return rv
 
         def event(self, ev, x, y, st):
-            global focus_taken
+            if renpy.map_event(ev, "drag_activate") and (x > 0 and x < self.size[0] and y > 0 and y < self.size[1]):
+                renpy.display.focus.set_grab(self)
+                self.focused = True
 
-            if MouseState.left() and (x > 0 and x < self.size[0] and y > 0 and y < self.size[1]) and (not self.focus and not focus_taken):
-                self.focus = True
-                focus_taken = True
+            if renpy.map_event(ev, "drag_deactivate"):
+                renpy.display.focus.set_grab(None)
+                self.focused = False
 
-            if not MouseState.left():
-                self.focus = False
-                focus_taken = False
+                renpy.restart_interaction()
 
-            if self.focus:
+            if self.has_focus():
                 if self.direction == "horizontal":
                     self.thumb.x = min(self.size[0], max(0, x))
                     self.thumb.color[0] = (self.thumb.x / self.size[0])
@@ -142,8 +155,17 @@ init python:
                 self.gradient.top_right = color
                 self.gradient.update_color()
 
+        def visit(self):
+            return [ self.thumb, self.gradient ]
+        
+        def per_interact(self):
+            renpy.redraw(self, 0.0)
+        
+        def has_focus(self):
+            return renpy.display.focus.get_grab() is self
+
     class ColorGradient(renpy.Displayable):
-        def __init__(self, size: tuple[int, int], colors: tuple[str, str, str, str] = ("#FFF", "#F00", "#000", "#000"), outline: str = "#004cff", *args, **kwargs):
+        def __init__(self, size: tuple[int, int], colors: tuple[str, str, str, str] = ("#FFF", "#F00", "#000", "#000"), outline: str = "#004cff", picker_size: T[float, int] = 8.0, *args, **kwargs):
             """
             This creates a gradient with four colors;
 
@@ -157,13 +179,15 @@ init python:
             super(ColorGradient, self).__init__(*args, **kwargs)
 
             self.size = size
-            self.focus = False
+            self.focused = False
             
             # These two are the default colors when you create the ColorGradient
             self.color = "#ffffff"
             self.hexcode = "#ffffff"
 
-            self.picker = Picker(size[0], outline)
+            self.text = Text(f"{self.hexcode.upper()}", style="color_picker_text_style", size=24)
+
+            self.picker = Picker(picker_size, outline)
             self.top_left, self.top_right, self.bottom_left, self.bottom_right = validate_gradient_colors(colors)
 
         def render(self, w, h, st, at):
@@ -182,64 +206,65 @@ init python:
             
             picker_rv = renpy.render(self.picker, 0, 0, st=st, at=at)
             rv.blit(shader_rv, (0, 0))
-            rv.subpixel_blit(picker_rv, (self.picker.x, self.picker.y))
+            rv.subpixel_blit(picker_rv, (self.picker.x-self.picker.radius, self.picker.y-self.picker.radius))
+
+            if self.focused:
+                rv.add_focus(self, None, 0, 0, *self.size)
 
             return rv
         
         def solid(self, xsize=75, ysize=75):
+            return DynamicDisplayable(self.preview_solid, xsize=xsize, ysize=ysize)
+
+        def preview_solid(self, st, at, xsize, ysize):
             """Returns a solid displayable with the current color."""
-            return Solid(self.color, xysize=(xsize, ysize))
+            return (Solid(self.color, xysize=(xsize, ysize)), 0.0)
 
         def event(self, ev, x, y, st):
-            global focus_taken
+            if (renpy.map_event(ev, "drag_activate") and (x > 0 and x < self.size[0] and y > 0 and y < self.size[1])):
+                renpy.display.focus.set_grab(self)
+                self.focused = True
 
-            if (MouseState.left() and (x > 0 and x < self.size[0] and y > 0 and y < self.size[1])) and not self.focus and not focus_taken:
-                self.focus = True
-                focus_taken = True
+            if renpy.map_event(ev, "drag_deactivate"):
+                renpy.display.focus.set_grab(None)
+                self.focused = False
 
-            if not MouseState.left():
-                self.focus = False
-                focus_taken = False
-
-            if self.focus:
+            if self.has_focus():
                 self.picker.x = min(self.size[0], max(0, x))
                 self.picker.y = min(self.size[1], max(0, y))
                 self.update_color()
 
         def update_color(self):
-
             self.picker.update_color(self.size, self.top_left, self.top_right, self.bottom_left, self.bottom_right)
             self.color = Color(rgb=self.picker.color).hexcode
             self.hexcode = self.color
-            renpy.restart_interaction()
+            self.text.set_text(self.hexcode.upper())
 
-    class Picker(renpy.Displayable):
-        def __init__(self, size: int, outline: str = "#004cff", *args, **kwargs):
+        def visit(self):
+            return [ self.picker ]
+        
+        def per_interact(self):
+            renpy.redraw(self, 0.0)
+        
+        def has_focus(self):
+            return renpy.display.focus.get_grab() is self
+
+    class Picker(Circle):
+        def __init__(self, size: int, outline: str = "#004cff", **kwargs):
             """
             `size`: int - given from ColorGradient displayable, this is the width used as interpolator to set a minimum & maximum size of the color picker.
 
             `outline`: str - given from ColorGradient, the "outline" color of this displayable
             """
 
-            super(Picker, self).__init__(*args, **kwargs)
+            super(Picker, self).__init__("#FFF", size, outline=outline, **kwargs)
 
-            self.color = [1.0, 1.0, 1.0]
             self.x, self.y = (0, 0)
-            self.outline = outline
-            self.size = size
 
         def render(self, w, h, st, at):
+            rv = super(Picker, self).render(w, h, st=st, at=at)
 
-            inner_size = min(10, max(7, (5 * (self.size // 200))))
-            outer_size = min(12, max(9, (6 * (self.size // 200))))
-
-            color = Color(rgb=self.color).hexcode
-            
-            self.inner = Circle(color, inner_size)
-            self.outer = Circle(self.outline, outer_size)
-
-            rv = renpy.render(Fixed(Transform(self.outer, align=(0.5, 0.5)), Transform(self.inner, align=(0.5, 0.5))), w, h, st=st, at=at)
-
+            renpy.redraw(self, 0.0)
             return rv
         
         def update_color(self, canvas: tuple[float], top_left, top_right, bottom_left, bottom_right):
@@ -286,32 +311,29 @@ init python:
                 Solid(Color(hls=self.color).hexcode, xysize=(self.xsize-4, self.ysize-4), align=(0.5, 0.5)), xysize=(self.xsize, self.ysize))
 
             rv = renpy.render(thumb, self.size[0], 10, st=st, at=at)
+
             renpy.redraw(self, 0.0)
             return rv
     
-    class PickerHLS(renpy.Displayable):
-        def __init__(self, size: float, outline: str = "#004cff", *args, **kwargs):
+        def per_interact(self):
+            renpy.redraw(self, 0.0)
+
+    class PickerHLS(Circle):
+        def __init__(self, size: float, outline: str = "#004cff", **kwargs):
             """
             `size`: int - given from SpectrumRadialGradient displayable, this is the width used as interpolator to set a minimum & maximum size of the color picker.
 
             `outline`: str - given from SpectrumRadialGradient, the "outline" color of this displayable
             """
 
-            super(PickerHLS, self).__init__(*args, **kwargs)
+            super(PickerHLS, self).__init__("#F00", size, outline=outline, **kwargs)
 
-            self.color = [1.0, 0.0, 0.0]
             self.x, self.y = (0, 0)
-            self.outline = outline
-            self.inner_size = min(10, max(7, (5*(size//200))))
-            self.outer_size = min(12, max(9, (6*(size//200))))
 
         def render(self, w, h, st, at):
-            color = Color(rgb=self.color).hexcode
-            self.inner = Circle(color, self.inner_size)
-            self.outer = Circle(self.outline, self.outer_size)
-
-            rv = renpy.render(Fixed(Transform(self.outer, align=(0.5, 0.5)), Transform(self.inner, align=(0.5, 0.5))), w, h, st=st, at=at)
-
+            rv = super(PickerHLS, self).render(w, h, st, at)
+            
+            renpy.redraw(self, 0.0)
             return rv
         
         def update_color(self, canvas: tuple[float, ...], top_left: tuple[float, ...], top_right: tuple[float, ...], bottom_left: tuple[float, ...], bottom_right: tuple[float, ...]):
@@ -323,12 +345,10 @@ init python:
             g = (1 - x) * (1 - y) * top_left[1] + x * (1 - y) * top_right[1] + (1 - x) * y * bottom_left[1] + x * y * bottom_right[1]
             b = (1 - x) * (1 - y) * top_left[2] + x * (1 - y) * top_right[2] + (1 - x) * y * bottom_left[2] + x * y * bottom_right[2]
 
-            self.color = [r, g, b]
+            self.color = (r, g, b)
 
-        def set_pos(self, radius, thickness, padding):
-            radius = radius
+        def set_pos(self, radius, thickness):
             angle = math.atan2(52.0 - radius, 52.0 - radius)
-            offset = (radius - thickness) + (thickness / 2)
-
-            self.x = radius + offset * math.cos(angle)
-            self.y = radius + offset * math.sin(angle)
+            offset = radius - self.radius
+            self.x = radius + offset * math.cos(angle) - self.radius
+            self.y = radius + offset * math.sin(angle) - self.radius

@@ -30,7 +30,6 @@ init python:
             
             rv.blit(shader_rv, (0, 0))
 
-            renpy.redraw(self, 0.0)
             return rv
 
     class Circle(renpy.Displayable):
@@ -79,7 +78,6 @@ init python:
 
             rv.blit(shader_rv, (0, 0))
 
-            renpy.redraw(self, 0.0)
             return rv
     
     class HollowCircle(renpy.Displayable):
@@ -119,7 +117,6 @@ init python:
             
             rv.blit(shader_rv, (0, 0))
 
-            renpy.redraw(self, 0.0)
             return rv
     
     class HollowArc(renpy.Displayable):
@@ -167,5 +164,4 @@ init python:
             
             rv.blit(shader_rv, (0, 0))
 
-            renpy.redraw(self, 0.0)
             return rv

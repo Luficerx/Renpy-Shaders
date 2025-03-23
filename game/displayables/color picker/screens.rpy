@@ -18,9 +18,11 @@ screen color_picker():
             fixed:
                 fit_first True align (0.5, 1.0) yoffset -1
                 add Canvas.solid(250, 50)
-                textbutton "[Canvas.hexcode!u]":
+                
+                button:
                     action [Notify(f"Copied {Canvas.hexcode}"), CopyToClipboard(Canvas.hexcode)]
-                    text_style "color_picker_text_style" text_size 24 align (0.5, 0.5)
+                    add Canvas.text
+                    align (0.5, 0.5)
 
             add Canvas align (0.5, 0.0) yoffset 37
 
@@ -39,8 +41,9 @@ screen color_picker():
             fixed:
                 fit_first True align (0.5, 1.0) yoffset -1
                 add RadialCanvas.solid(238, 50)
-                textbutton "[RadialCanvas.hexcode!u]":
+                button:
                     action [Notify(f"Copied {RadialCanvas.hexcode}"), CopyToClipboard(RadialCanvas.hexcode)]
-                    text_style "color_picker_text_style" text_size 24 align (0.5, 0.5)
+                    add RadialCanvas.text
+                    align (0.5, 0.5)
 
     textbutton "Return (x)" action Jump("start") keysym "K_x" align (0.0, 1.0) offset (10, -10) text_style "return_button_style"
