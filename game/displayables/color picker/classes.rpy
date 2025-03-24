@@ -165,6 +165,8 @@ init python:
             return renpy.display.focus.get_grab() is self
 
     class ColorGradient(renpy.Displayable):
+        focusable = True
+        
         def __init__(self, size: tuple[int, int], colors: tuple[str, str, str, str] = ("#FFF", "#F00", "#000", "#000"), outline: str = "#004cff", picker_size: T[float, int] = 8.0, *args, **kwargs):
             """
             This creates a gradient with four colors;
