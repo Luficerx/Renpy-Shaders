@@ -4,7 +4,7 @@
 transform AnimatedCircle(color, rad=5.0, alias_factor=2.0):
     Null(rad*2, rad*2)
     shader "2DVfx.circle" mesh True
-    u_alias_factor alias_factor
+    u_aalias alias_factor
     u_color Color(color).rgba
     u_center (0.0, 0.0)
     u_radius (rad)

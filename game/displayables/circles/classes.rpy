@@ -33,7 +33,7 @@ init python:
             return rv
 
     class Circle(renpy.Displayable):
-        def __init__(self, color: T[str, tuple, list], radius: T[int, float] = 5.0, alias_factor: T[int, float] = 2.0, outline: T[str, tuple, list] = None, outline_thickness: T[float, int] = 2, *args, **kwargs):
+        def __init__(self, color: T[str, tuple, list], radius: T[int, float] = 5.0, aalias_factor: T[int, float] = 2.0, outline: T[str, tuple, list] = None, outline_thickness: T[float, int] = 2, *args, **kwargs):
             """
             Creates a circle displayable.
             
@@ -41,14 +41,14 @@ init python:
 
             `radius`: int or float - the circle radius.
 
-            `alias_factor`: int or float - how strong the anti-aliasing interpolation is.
+            `aalias_factor`: int or float - how strong the anti-aliasing interpolation is.
             """
 
             super(Circle, self).__init__(*args, **kwargs)
             
             self.color = validate_circle_color(color)
             self.radius = radius
-            self.alias_factor = alias_factor
+            self.aalias_factor = aalias_factor
             self.size = (self.radius*2, self.radius*2)
             
             self.outline = None
@@ -71,7 +71,7 @@ init python:
             
             shader_rv.mesh = True
             shader_rv.fill((0.0, 0.0, 0.0, 1.0))
-            shader_rv.add_uniform("u_alias_factor", self.alias_factor)
+            shader_rv.add_uniform("u_aalias", self.aalias_factor)
             shader_rv.add_uniform("u_radius", self.radius)
             shader_rv.add_uniform("u_center", (0, 0))
             shader_rv.add_uniform("u_color", self.color)
