@@ -26,7 +26,6 @@ init python:
             shader_rv.fill((0.0, 0.0, 0.0, 1.0))
             shader_rv.add_uniform("u_radius", self.radius)
             shader_rv.add_uniform("u_color", self.color)
-            shader_rv.add_uniform("u_center", (0, 0))
             
             rv.blit(shader_rv, (0, 0))
 
@@ -73,7 +72,6 @@ init python:
             shader_rv.fill((0.0, 0.0, 0.0, 1.0))
             shader_rv.add_uniform("u_aalias", self.aalias_factor)
             shader_rv.add_uniform("u_radius", self.radius)
-            shader_rv.add_uniform("u_center", (0, 0))
             shader_rv.add_uniform("u_color", self.color)
 
             rv.blit(shader_rv, (0, 0))
@@ -113,7 +111,6 @@ init python:
             shader_rv.add_uniform("u_thickness", self.thickness)
             shader_rv.add_uniform("u_radius", self.radius)
             shader_rv.add_uniform("u_color", self.color)
-            shader_rv.add_uniform("u_center", (0, 0))
             
             rv.blit(shader_rv, (0, 0))
 
@@ -160,7 +157,6 @@ init python:
             shader_rv.add_uniform("u_progress", self.progress)
             shader_rv.add_uniform("u_radius", self.radius)
             shader_rv.add_uniform("u_color", self.color)
-            shader_rv.add_uniform("u_center", (0, 0))
             
             rv.blit(shader_rv, (0, 0))
 

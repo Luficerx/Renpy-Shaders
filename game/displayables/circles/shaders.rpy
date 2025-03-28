@@ -2,7 +2,6 @@ init python:
     renpy.register_shader("2DVfx.rawcircle", variables="""
         
         uniform float u_radius;
-        uniform vec2 u_center;
         uniform vec3 u_color;
 
         attribute vec4 a_position;
@@ -13,13 +12,14 @@ init python:
         v_position = a_position.xy;
 
         """, fragment_300="""
+
         vec2 pos = v_position - vec2(u_radius, u_radius);
-        float dist = distance(pos, u_center);
+        float dist = distance(pos, vec2(0.0, 0.0));
+        
+        vec4 color = dist <= u_radius ? vec4(u_color, 1.0) : vec4(0.0);
+        gl_FragColor = color;
 
-        if (dist <= u_radius) {
-            gl_FragColor = vec4(u_color, 1.0);
-
-        }""")
+        """)
 
     renpy.register_shader("2DVfx.circle", variables="""
 
@@ -37,11 +37,9 @@ init python:
         """, fragment_300="""
 
         vec2 pos = v_position - vec2(u_radius, u_radius);
-        vec2 u_center = vec2(0.5, 0.5);
-
-        float dist = distance(pos, u_center);
+        float dist = distance(pos, vec2(0.0, 0.0));
         float alpha = smoothstep(u_radius, u_radius - u_aalias, dist);
-        gl_FragColor = vec4(u_color*alpha, alpha);
+        gl_FragColor = vec4(u_color * alpha, alpha);
 
         """)
 
@@ -49,7 +47,6 @@ init python:
 
         uniform float u_aalias; // Anti-aliasign factor.
         uniform float u_radius;
-        uniform vec2 u_center;
 
         uniform float u_outline_thickness;
         uniform vec3 u_outline;
@@ -64,7 +61,7 @@ init python:
 
         """, fragment_300="""
         vec2 pos = v_position - vec2(u_radius, u_radius);
-        float dist = distance(pos, u_center);
+        float dist = distance(pos, vec2(0.0, 0.0));
 
         vec4 circle_color = vec4(u_color, 1.0);
         vec4 outline_color = vec4(u_outline, 1.0);
@@ -87,7 +84,6 @@ init python:
         uniform float u_alias_factor; // Anti-aliasign factor.
         uniform float u_thickness;    // How thick the border is.
         uniform float u_radius;
-        uniform vec2 u_center;
         uniform vec3 u_color;
 
         attribute vec4 a_position;
@@ -99,7 +95,7 @@ init python:
 
         """, fragment_300="""
         vec2 pos = v_position - vec2(u_radius, u_radius);
-        float dist = distance(pos, u_center);
+        float dist = distance(pos, vec2(0.0, 0.0));
 
         float inner_radius = u_radius - u_thickness;
         float alpha_outer = smoothstep(u_radius, u_radius - u_alias_factor, dist);
@@ -125,7 +121,6 @@ init python:
         uniform float u_progress;
         uniform float u_rotation;
         uniform float u_radius;
-        uniform vec2 u_center;
         uniform vec3 u_color;
 
         attribute vec4 a_position;
@@ -137,6 +132,8 @@ init python:
 
         """, fragment_300="""
         vec2 pos = v_position - vec2(u_radius, u_radius);
+        vec2 u_center = vec2(0.0, 0.0);
+
         float dist = distance(pos, u_center);
         float pi = 3.14159265359;
 

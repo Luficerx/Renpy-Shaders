@@ -28,7 +28,7 @@ screen display_circles():
                     add Circle("#F00", 50.0, 0.0)
                     add Circle("#0F0", 50.0, 1.0)
                     add Circle("#00F", 50.0, 1.5)
-                    add Circle("#000000", 50.0, 1.5, outline="#ffffff", outline_thickness=3)
+                    add Circle("#000", 50.0, 1.5, outline="#FFF", outline_thickness=3)
                     add AnimatedCircle("#00F", 50.0, 1.5)
 
             frame:
@@ -52,6 +52,7 @@ screen display_circles():
                     add HollowArc("#F00", 50.0, 0.0, 15.0, 0.95, 0.25)
                     add HollowArc("#0F0", 50.0, 1.0, 20.0, 0.95, 0.50)
                     add HollowArc("#00F", 50.0, 2.0, 15.0, 0.95, 0.75)
+                    add HollowArc("#FFF", 50.0, 2.0, 50.0, 0.95, 0.75)
                     add AnimatedHollowArc("#00F", 50.0, 2.0, 15.0)
     
     textbutton "Return (x)" action Jump("start") keysym "K_x" align (0.0, 1.0) offset (10, -10) text_style "return_button_style"
